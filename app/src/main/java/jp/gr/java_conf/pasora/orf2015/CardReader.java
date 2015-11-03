@@ -18,6 +18,8 @@ public class CardReader implements NfcAdapter.ReaderCallback {
     protected NfcAdapter mNfcAdapter;
     protected CardReaderListener mListener;
 
+    final protected static char[] hexArray = "0123456789ABCDEF".toCharArray();
+
     public CardReader(Activity activity, CardReaderListener listener) {
         mActivity = activity;
         mNfcAdapter = NfcAdapter.getDefaultAdapter(mActivity);
@@ -63,12 +65,13 @@ public class CardReader implements NfcAdapter.ReaderCallback {
             e.printStackTrace();
         }
         if (res == null) return null;
-        byte[] numberCodes1 = new byte[]{res[13], res[14]};
-        byte[] numberCodes2 = new byte[]{res[13], res[14]};
-        String suicaLog1 = new String(numberCodes1, "US-ASCII");
-        String suicaLog2 = new String(numberCodes1, "US-ASCII");
-        String[] hoge = {suicaLog1, suicaLog2};
-        return hoge;
+        byte[] raw = new byte[]{
+                res[13], res[14], res[15], res[16],
+                res[17], res[18], res[19], res[20],
+                res[21], res[22], res[23], res[24],
+                res[25], res[26], res[27], res[28]
+        };
+        return new String(Hex.encodeHex(raw));
     }
 
     byte[] readWithoutEncryption(NfcF nfcF, byte[] IDm) throws IOException {
@@ -92,7 +95,7 @@ public class CardReader implements NfcAdapter.ReaderCallback {
         bout.write(0x01);
         bout.write(0x0F);
         bout.write(0x09);
-        bout.write(0x14);
+        bout.write(0x01);
 
         /***********************
          *  block list element
@@ -111,7 +114,16 @@ public class CardReader implements NfcAdapter.ReaderCallback {
         nfcF.close();
 
         return res;
+    }
 
+    String bytesToHex(byte[] bytes) {
+        char[] hexChars = new char[bytes.length * 2];
+        for (int i = 0; i < bytes.length; i++) {
+            int v = bytes[i] & 0xFF;
+            hexChars[i * 2] = hexArray[v >>> 4];
+            hexChars[i * 2 + 1] = hexArray[v & 0x0F];
+        }
+        return new String(hexChars);
     }
 
     public interface CardReaderListener {
