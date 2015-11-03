@@ -7,7 +7,6 @@ import android.nfc.tech.NfcF;
 import android.util.Log;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOError;
 import java.io.IOException;
 
 /**
@@ -18,7 +17,11 @@ public class CardReader implements NfcAdapter.ReaderCallback {
     protected NfcAdapter mNfcAdapter;
     protected CardReaderListener mListener;
 
-    final protected static char[] hexArray = "0123456789ABCDEF".toCharArray();
+    final protected static char[] hexArray;
+
+    static {
+        hexArray = "0123456789ABCDEF".toCharArray();
+    }
 
     public CardReader(Activity activity, CardReaderListener listener) {
         mActivity = activity;
@@ -49,14 +52,14 @@ public class CardReader implements NfcAdapter.ReaderCallback {
         NfcF nfcF = NfcF.get(tag);
         byte[] IDm = tag.getId();
         try {
-            String[] suicaLog = getSuicaLog(nfcF, IDm);
+            String suicaLog = getSuicaLog(nfcF, IDm);
             mListener.onDiscovered(suicaLog);
         } catch (IOException e) {
             mListener.onError(e);
         }
     }
 
-    String[] getSuicaLog(NfcF nfcF, byte[] IDm) throws IOException {
+    String getSuicaLog(NfcF nfcF, byte[] IDm) throws IOException {
         byte[] res = new byte[0];
         try {
             res = readWithoutEncryption(nfcF, IDm);
@@ -71,7 +74,7 @@ public class CardReader implements NfcAdapter.ReaderCallback {
                 res[21], res[22], res[23], res[24],
                 res[25], res[26], res[27], res[28]
         };
-        return new String(Hex.encodeHex(raw));
+        return bytesToHex(raw);
     }
 
     byte[] readWithoutEncryption(NfcF nfcF, byte[] IDm) throws IOException {
@@ -127,7 +130,7 @@ public class CardReader implements NfcAdapter.ReaderCallback {
     }
 
     public interface CardReaderListener {
-        void onDiscovered(String[] suicaLog);
+        void onDiscovered(String suicaLog);
         void onError(Exception exception);
     }
 }
