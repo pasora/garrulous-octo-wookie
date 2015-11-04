@@ -1,7 +1,11 @@
 package jp.gr.java_conf.pasora.orf2015;
 
+import android.content.Intent;
+import android.provider.Settings;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.util.Log;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -10,9 +14,12 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
+public class MapsActivity
+        extends FragmentActivity
+        implements OnMapReadyCallback, CardReader.CardReaderListener  {
 
-    private GoogleMap mMap;
+    private CardReader mCardReader;
+    private final ThreadLocal<GoogleMap> mMap = new ThreadLocal<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,8 +29,30 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        mCardReader = new CardReader(this, this);
+
+        if (!mCardReader.isNfcInstalled()) {
+            Toast.makeText(getApplicationContext(), getString(R.string.error_nfc_nosupport), Toast.LENGTH_LONG).show();
+            return;
+        }
+        if (!mCardReader.isNfcEnabled()) {
+            Toast.makeText(getApplicationContext(), getString(R.string.error_nfc_disable), Toast.LENGTH_LONG).show();
+            startActivity(new Intent(Settings.ACTION_NFC_SETTINGS));
+        }
+
+        mCardReader.enable();
     }
 
+    @Override
+    public void onDiscovered(String suicaLog) {
+        Log.d("nfc", suicaLog);
+    }
+
+    @Override
+    public void onError(Exception exception) {
+
+    }
 
     /**
      * Manipulates the map once available.
@@ -36,10 +65,22 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
      */
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        mMap = googleMap;
+        mMap.set(googleMap);
         // Add a marker in Sydney and move the camera
         LatLng tokyoMidtown = new LatLng(35.6655766,139.7304511);
-        mMap.addMarker(new MarkerOptions().position(tokyoMidtown).title("here!"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(tokyoMidtown));
+        mMap.get().addMarker(new MarkerOptions().position(tokyoMidtown).title("here!"));
+        mMap.get().moveCamera(CameraUpdateFactory.newLatLng(tokyoMidtown));
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        mCardReader.disable();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mCardReader.enable();
     }
 }
