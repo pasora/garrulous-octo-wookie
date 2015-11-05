@@ -52,14 +52,14 @@ public class CardReader implements NfcAdapter.ReaderCallback {
         NfcF nfcF = NfcF.get(tag);
         byte[] IDm = tag.getId();
         try {
-            String suicaLog = getSuicaLog(nfcF, IDm);
-            mListener.onDiscovered(suicaLog);
+            String suicaLogStr = getSuicaLogStr(nfcF, IDm);
+            mListener.onDiscovered(suicaLogStr);
         } catch (IOException e) {
             mListener.onError(e);
         }
     }
 
-    String getSuicaLog(NfcF nfcF, byte[] IDm) throws IOException {
+    String getSuicaLogStr(NfcF nfcF, byte[] IDm) throws IOException {
         byte[] res = new byte[0];
         try {
             res = readWithoutEncryption(nfcF, IDm);
@@ -130,7 +130,7 @@ public class CardReader implements NfcAdapter.ReaderCallback {
     }
 
     public interface CardReaderListener {
-        void onDiscovered(String suicaLog);
+        void onDiscovered(String suicaLogStr);
         void onError(Exception exception);
     }
 }
