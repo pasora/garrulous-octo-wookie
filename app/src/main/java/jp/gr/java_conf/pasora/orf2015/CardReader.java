@@ -17,8 +17,9 @@ public class CardReader implements NfcAdapter.ReaderCallback {
     protected NfcAdapter mNfcAdapter;
     protected CardReaderListener mListener;
 
+    //使わないかも
     final protected static char[] hexArray;
-
+    //使わないかも
     static {
         hexArray = "0123456789ABCDEF".toCharArray();
     }
@@ -52,14 +53,14 @@ public class CardReader implements NfcAdapter.ReaderCallback {
         NfcF nfcF = NfcF.get(tag);
         byte[] IDm = tag.getId();
         try {
-            String suicaLogStr = getSuicaLogStr(nfcF, IDm);
-            mListener.onDiscovered(suicaLogStr);
+            byte[] suicaLogBin = getSuicaLogBin(nfcF, IDm);
+            mListener.onDiscovered(suicaLogBin);
         } catch (IOException e) {
             mListener.onError(e);
         }
     }
 
-    String getSuicaLogStr(NfcF nfcF, byte[] IDm) throws IOException {
+    byte[] getSuicaLogBin(NfcF nfcF, byte[] IDm) throws IOException {
         byte[] res = new byte[0];
         try {
             res = readWithoutEncryption(nfcF, IDm);
@@ -74,7 +75,7 @@ public class CardReader implements NfcAdapter.ReaderCallback {
                 res[21], res[22], res[23], res[24],
                 res[25], res[26], res[27], res[28]
         };
-        return bytesToHex(raw);
+        return raw;
     }
 
     byte[] readWithoutEncryption(NfcF nfcF, byte[] IDm) throws IOException {
@@ -119,6 +120,7 @@ public class CardReader implements NfcAdapter.ReaderCallback {
         return res;
     }
 
+    //使わないかも
     String bytesToHex(byte[] bytes) {
         char[] hexChars = new char[bytes.length * 2];
         for (int i = 0; i < bytes.length; i++) {
@@ -130,7 +132,7 @@ public class CardReader implements NfcAdapter.ReaderCallback {
     }
 
     public interface CardReaderListener {
-        void onDiscovered(String suicaLogStr);
+        void onDiscovered(byte[] suicaLogStr);
         void onError(Exception exception);
     }
 }
