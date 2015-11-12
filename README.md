@@ -20,5 +20,5 @@ ORF 当日の
 年代、性別、SF (残額)には興味がありません。
 
 # スペシャルサンクス
-[サイバネ駅コードデータベース](http://www.denno.net/SFCardFan/)
+[サイバネ駅コードデータベース](http://www.denno.net/SFCardFan/)  
 [駅データ.jp](http://www.ekidata.jp/)
