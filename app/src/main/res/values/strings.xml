@@ -1,4 +1,6 @@
 <resources>
     <string name="app_name">ORF2015</string>
     <string name="title_activity_maps">Welcome to ORF 2015!</string>
+    <string name="error_nfc_nosupport">NFC is not supported on this device.</string>
+    <string name="error_nfc_disable">NFC is not available on this device.</string>
 </resources>
