@@ -8,16 +8,18 @@ import android.util.Log;
  */
 
 public class SuicaLog {
-    private byte[] suicaLogBin;
     private char[] suicaLogChars;
     private String[] suicaLogStr;
     private int year;
     private int month;
     private int day;
-    private String enter;
-    private String exit;
+    private String enterSection;
+    private String enterStation;
+    private String exitSection;
+    private String exitStation;
+    private String region;
     private String latitude;
-    private String longtitude;
+    private String longitude;
 
     final protected static char[] hexArray;
     static {
@@ -25,7 +27,6 @@ public class SuicaLog {
     }
 
     public SuicaLog(byte[] suicaLogBin) {
-        this.suicaLogBin = suicaLogBin;
         this.suicaLogChars = bytesToHexChars(suicaLogBin);
         this.suicaLogStr = charsToStr(suicaLogChars);
 
@@ -34,6 +35,12 @@ public class SuicaLog {
                 + ((Integer.parseInt(suicaLogStr[5], 16) & 0xE0) >> 5);
         this.day = (Integer.parseInt(suicaLogStr[5], 16) & 0x1F);
 
+        this.enterSection = suicaLogStr[6];
+        this.enterStation = suicaLogStr[7];
+        this.exitSection = suicaLogStr[8];
+        this.exitStation = suicaLogStr[9];
+        this.region = suicaLogStr[15];
+
         Log.d("nfc", new String(suicaLogChars));
         for (int i = 0; i < suicaLogStr.length; i++) {
             Log.d("suicaLogStr[" + i + "]", String.valueOf(suicaLogStr[i]));
@@ -41,6 +48,44 @@ public class SuicaLog {
         Log.d("log_year", String.valueOf(year));
         Log.d("log_month", String.valueOf(month));
         Log.d("log_day", String.valueOf(day));
+
+        Log.d("log_enter_section", enterSection);
+        Log.d("log_enter_station", enterStation);
+        Log.d("log_exit_section", exitSection);
+        Log.d("log_exit_station", exitStation);
+        Log.d("log_region", region);
+    }
+
+    public int getYear() {
+        return year;
+    }
+
+    public int getMonth() {
+        return month;
+    }
+
+    public int getDay() {
+        return day;
+    }
+
+    public String getEnterSection() {
+        return enterSection;
+    }
+
+    public String getEnterStation() {
+        return enterStation;
+    }
+
+    public String getExitSection() {
+        return exitSection;
+    }
+
+    public String getExitStation() {
+        return exitStation;
+    }
+
+    public String getRegion() {
+        return region;
     }
 
     char[] bytesToHexChars(byte[] bytes) {
