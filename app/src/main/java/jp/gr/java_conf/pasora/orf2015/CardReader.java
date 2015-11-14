@@ -54,6 +54,7 @@ public class CardReader implements NfcAdapter.ReaderCallback {
         byte[] IDm = tag.getId();
         try {
             byte[] suicaLogBin = getSuicaLogBin(nfcF, IDm);
+            Log.d("nfc", bytesToHex(suicaLogBin));
             mListener.onDiscovered(suicaLogBin);
         } catch (IOException e) {
             mListener.onError(e);
@@ -106,11 +107,11 @@ public class CardReader implements NfcAdapter.ReaderCallback {
          ***********************
          * b1       2 bytes block list element
          * b000     access mode
-         * b1001    service code list order
-         * -> b1000 1001 = 0x8001
+         * b0000    service code list order
+         * -> b1000 0000 = 0x8000
          */
         bout.write(0x80);
-        bout.write(0x01);
+        bout.write(0x00);
 
         byte[] msg = bout.toByteArray();
         nfcF.connect();
