@@ -49,8 +49,8 @@ public class MapsActivity
     }
 
     @Override
-    public void onDiscovered(byte[] suicaLogBin) {
-        SuicaLog suicaLog = new SuicaLog(suicaLogBin);
+    public void onDiscovered(Visitor visitor) {
+
     }
 
     @Override

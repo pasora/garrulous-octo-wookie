@@ -46,17 +46,24 @@ public class CardReader implements NfcAdapter.ReaderCallback {
         NfcF nfcF = NfcF.get(tag);
         byte[] IDm = tag.getId();
         try {
-            byte[] suicaLogBin = getSuicaLogBin(nfcF, IDm);
-            mListener.onDiscovered(suicaLogBin);
+            Visitor visitor = new Visitor();
+            int i = 0;
+            do {
+                if (i >= 20) break;
+                byte[] suicaLogBin = getSuicaLogBin(nfcF, IDm, i);
+                visitor.importSuicaLog(new SuicaLog(suicaLogBin));
+                i++;
+            } while (visitor.isLatestLogToday());
+            mListener.onDiscovered(visitor);
         } catch (IOException e) {
             mListener.onError(e);
         }
     }
 
-    byte[] getSuicaLogBin(NfcF nfcF, byte[] IDm) throws IOException {
+    byte[] getSuicaLogBin(NfcF nfcF, byte[] IDm, int blockNumber) throws IOException {
         byte[] res = new byte[0];
         try {
-            res = readWithoutEncryption(nfcF, IDm);
+            res = readWithoutEncryption(nfcF, IDm, blockNumber);
         } catch (IOException e) {
             Log.e("nfc", e.getMessage(), e);
             e.printStackTrace();
@@ -71,7 +78,8 @@ public class CardReader implements NfcAdapter.ReaderCallback {
         return raw;
     }
 
-    byte[] readWithoutEncryption(NfcF nfcF, byte[] IDm) throws IOException {
+    byte[] readWithoutEncryption(NfcF nfcF, byte[] IDm, int blockNumber) throws IOException {
+        //keep blockNumber under 20
         ByteArrayOutputStream bout = new ByteArrayOutputStream(100);
         byte[] res;
 
@@ -99,11 +107,11 @@ public class CardReader implements NfcAdapter.ReaderCallback {
          ***********************
          * b1       2 bytes block list element
          * b000     access mode
-         * b0000    service code list order
-         * -> b1000 0000 = 0x8000
+         * blockNumber    service code list order
+         * -> b1000 **** = 0x80**
          */
         bout.write(0x80);
-        bout.write(0x00);
+        bout.write(blockNumber);
 
         byte[] msg = bout.toByteArray();
         nfcF.connect();
@@ -114,7 +122,7 @@ public class CardReader implements NfcAdapter.ReaderCallback {
     }
 
     public interface CardReaderListener {
-        void onDiscovered(byte[] suicaLogStr);
+        void onDiscovered(Visitor visitor);
         void onError(Exception exception);
     }
 }
