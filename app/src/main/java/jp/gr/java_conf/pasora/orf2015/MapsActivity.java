@@ -21,6 +21,7 @@ public class MapsActivity
 
     private CardReader mCardReader;
     private final ThreadLocal<GoogleMap> mMap = new ThreadLocal<>();
+    StationDatabase stationDatabase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,11 +48,23 @@ public class MapsActivity
         }
 
         mCardReader.enable();
+
+        stationDatabase = new StationDatabase(this);
     }
 
     @Override
     public void onDiscovered(Visitor visitor) {
-
+        if (visitor.fixStationData()) {
+            visitor.setStationName(stationDatabase);
+            Log.d("start line", visitor.getStartLineName());
+            Log.d("start", visitor.getStartStationName());
+            Log.d("startLat", visitor.getStartLatitude());
+            Log.d("startLng", visitor.getStartLongitude());
+            Log.d("dest line", visitor.getDestLineName());
+            Log.d("dest", visitor.getDestStationName());
+            Log.d("destLat", visitor.getDestLatitude());
+            Log.d("destLng", visitor.getDestLongitude());
+        }
     }
 
     @Override
