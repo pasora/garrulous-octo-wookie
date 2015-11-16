@@ -18,8 +18,6 @@ public class SuicaLog {
     private String exitSection;
     private String exitStation;
     private String region;
-    private String latitude;
-    private String longitude;
 
     final protected static char[] hexArray;
     static {
