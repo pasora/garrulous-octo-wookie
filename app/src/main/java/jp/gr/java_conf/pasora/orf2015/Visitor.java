@@ -11,8 +11,16 @@ public class Visitor {
     private int year;
     private int month;
     private int day;
-    private String start;
-    private String destination;
+    private String startSection;
+    private String startStation;
+    private String startStationName;
+    private String startStationLatitude;
+    private String startStationLongitude;
+    private String destSection;
+    private String destStation;
+    private String destStationName;
+    private String destStaLatitude;
+    private String destStaLongitude;
     private ArrayList<SuicaLog> suicaLogArrayList = new ArrayList<SuicaLog>();
 
     public Visitor() {
@@ -38,4 +46,19 @@ public class Visitor {
 
         return true;
     }
+
+    public boolean fixStationData() {
+        if (!isLatestLogToday()) return false;
+        this.destSection = suicaLogArrayList.get(0).getExitSection();
+        this.destStation = suicaLogArrayList.get(0).getExitStation();
+        //駅名設定
+        //緯度経度設定
+        this.startSection = suicaLogArrayList.get(suicaLogArrayList.size() - 1).getEnterSection();
+        this.startStation = suicaLogArrayList.get(suicaLogArrayList.size() - 1).getEnterStation();
+        //駅名設定
+        //緯度経度設定
+
+        return true;
+    }
+
 }
