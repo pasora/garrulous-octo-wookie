@@ -17,13 +17,6 @@ public class CardReader implements NfcAdapter.ReaderCallback {
     protected NfcAdapter mNfcAdapter;
     protected CardReaderListener mListener;
 
-    //使わないかも
-    final protected static char[] hexArray;
-    //使わないかも
-    static {
-        hexArray = "0123456789ABCDEF".toCharArray();
-    }
-
     public CardReader(Activity activity, CardReaderListener listener) {
         mActivity = activity;
         mNfcAdapter = NfcAdapter.getDefaultAdapter(mActivity);
@@ -54,7 +47,6 @@ public class CardReader implements NfcAdapter.ReaderCallback {
         byte[] IDm = tag.getId();
         try {
             byte[] suicaLogBin = getSuicaLogBin(nfcF, IDm);
-            Log.d("nfc", bytesToHex(suicaLogBin));
             mListener.onDiscovered(suicaLogBin);
         } catch (IOException e) {
             mListener.onError(e);
@@ -119,17 +111,6 @@ public class CardReader implements NfcAdapter.ReaderCallback {
         nfcF.close();
 
         return res;
-    }
-
-    //使わないかも
-    String bytesToHex(byte[] bytes) {
-        char[] hexChars = new char[bytes.length * 2];
-        for (int i = 0; i < bytes.length; i++) {
-            int v = bytes[i] & 0xFF;
-            hexChars[i * 2] = hexArray[v >>> 4];
-            hexChars[i * 2 + 1] = hexArray[v & 0x0F];
-        }
-        return new String(hexChars);
     }
 
     public interface CardReaderListener {

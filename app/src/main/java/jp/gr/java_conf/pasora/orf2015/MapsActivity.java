@@ -50,7 +50,7 @@ public class MapsActivity
 
     @Override
     public void onDiscovered(byte[] suicaLogBin) {
-        Log.d("nfc", suicaLogBin.toString());
+        SuicaLog suicaLog = new SuicaLog(suicaLogBin);
     }
 
     @Override
