@@ -33,6 +33,7 @@ public class MapsActivity
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+        mapFragment.getMap().moveCamera(CameraUpdateFactory.zoomTo(10));
 
         mCardReader = new CardReader(this, this);
 
