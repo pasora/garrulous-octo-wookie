@@ -3,7 +3,7 @@ package jp.gr.java_conf.pasora.orf2015;
 /**
  * Created by masahikohara on 2015/11/15.
  */
-public class StationData {
+public class StationDatabase {
     private String[] regionCode = new String[5952];
     private String[] sectionCode = new String[5952];
     private String[] stationCode = new String[5952];
@@ -15,7 +15,7 @@ public class StationData {
     private String[] address = new String[5952];
     private String[] other = new String[5952];
 
-    public StationData() {
+    public StationDatabase() {
 
     }
 }
