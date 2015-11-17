@@ -13,6 +13,7 @@ public class SuicaLog {
     private int year;
     private int month;
     private int day;
+    private String process;
     private String enterSection;
     private String enterStation;
     private String exitSection;
@@ -32,6 +33,8 @@ public class SuicaLog {
         this.month = ((Integer.parseInt(suicaLogStr[4], 16) & 0x01) << 3)
                 + ((Integer.parseInt(suicaLogStr[5], 16) & 0xE0) >> 5);
         this.day = (Integer.parseInt(suicaLogStr[5], 16) & 0x1F);
+
+        this.process = suicaLogStr[1];
 
         this.enterSection = suicaLogStr[6];
         this.enterStation = suicaLogStr[7];
@@ -64,6 +67,10 @@ public class SuicaLog {
 
     public int getDay() {
         return day;
+    }
+
+    public String getProcess() {
+        return process;
     }
 
     public String getEnterSection() {
@@ -105,5 +112,24 @@ public class SuicaLog {
             suicaLogStr[i] = new String(sb);
         }
         return suicaLogStr;
+    }
+
+    public boolean isTrain() {
+        if (process.equals("01")) return true;
+        if (process.equals("02")) return true;
+        if (process.equals("03")) return true;
+        if (process.equals("04")) return true;
+        if (process.equals("05")) return true;
+        if (process.equals("06")) return true;
+        if (process.equals("07")) return true;
+        if (process.equals("08")) return true;
+        if (process.equals("11")) return true;
+        if (process.equals("13")) return true;
+        if (process.equals("14")) return true;
+        if (process.equals("15")) return true;
+        if (process.equals("84")) return true;
+        if (process.equals("85")) return true;
+
+        return false;
     }
 }
