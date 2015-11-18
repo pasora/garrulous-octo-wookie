@@ -21,7 +21,7 @@
         
         <fragment xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:tools="http://schemas.android.com/tools"
-            android:layout_width="720dp" android:layout_height="match_parent"
+            android:layout_width="640dp" android:layout_height="match_parent"
             android:id="@+id/map"
             android:name="com.google.android.gms.maps.SupportMapFragment"
             tools:context=".MapsActivity" />
@@ -44,7 +44,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="210dp"
                 android:id="@+id/destList"
-                android:textSize="30dp"
+                android:textSize="20dp"
                 android:textColor="#000000"
                 android:background="#FFFFFF"/>
 
@@ -62,7 +62,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="300dp"
                 android:id="@+id/startList"
-                android:textSize="30dp"
+                android:textSize="20dp"
                 android:textColor="#000000"
                 android:background="#FFFFFF"/>
 

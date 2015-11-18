@@ -2,6 +2,7 @@ package jp.gr.java_conf.pasora.orf2015;
 
 import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.provider.Settings;
@@ -34,6 +35,8 @@ public class MapsActivity
     private final ThreadLocal<GoogleMap> mMap = new ThreadLocal<>();
     StationDatabase stationDatabase;
     TextView logTextView;
+    TextView startTextViewList;
+    TextView destTextViewList;
     ArrayList<MarkerOptions> startMarkerOptionsArrayList = new ArrayList<>();
     ArrayList<MarkerOptions> destMarkerOptionsArrayList = new ArrayList<>();
 
@@ -59,6 +62,8 @@ public class MapsActivity
         mapFragment.getMap().moveCamera(CameraUpdateFactory.zoomTo(10));
 
         logTextView = (TextView)this.findViewById(R.id.showLogData);
+        startTextViewList = (TextView)this.findViewById(R.id.startList);
+        destTextViewList = (TextView)this.findViewById(R.id.destList);
 
         logDatabaseHelper = new LogDatabaseHelper(this);
 
@@ -144,6 +149,8 @@ public class MapsActivity
                         .addMarker(destMarkerOptionsArrayList.get(destMarkerOptionsArrayList.size() - 1));
             }
             logTextView.setText(result);
+            startTextViewList.setText(getStartList());
+            destTextViewList.setText(getDestList());
         }
     }
 
@@ -226,5 +233,43 @@ public class MapsActivity
             }
         }
         return false;
+    }
+
+    private String getStartList() {
+        LogDatabaseHelper helper = new LogDatabaseHelper(this);
+        SQLiteDatabase db = helper.getReadableDatabase();
+        Cursor cursor = db.rawQuery("select start, count(1) as cnt from logrecord group by start order by cnt desc", new String[]{});
+
+        boolean next = cursor.moveToFirst();
+        String list = "";
+        while (next) {
+            list += (String.format("%s人:%s\n", cursor.getString(1), cursor.getString(0)));
+            next = cursor.moveToNext();
+        }
+
+        cursor.close();
+        db.close();
+        helper.close();
+
+        return list;
+    }
+
+    private String getDestList() {
+        LogDatabaseHelper helper = new LogDatabaseHelper(this);
+        SQLiteDatabase db = helper.getReadableDatabase();
+        Cursor cursor = db.rawQuery("select destination, count(1) as cnt from logrecord group by destination order by cnt desc", new String[]{});
+
+        boolean next = cursor.moveToFirst();
+        String list = "";
+        while (next) {
+            list += (String.format("%s人:%s\n", cursor.getString(1), cursor.getString(0)));
+            next = cursor.moveToNext();
+        }
+
+        cursor.close();
+        db.close();
+        helper.close();
+
+        return list;
     }
 }
