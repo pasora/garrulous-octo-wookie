@@ -2,18 +2,19 @@ package jp.gr.java_conf.pasora.orf2015;
 
 import android.app.AlertDialog;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.AsyncTask;
 import android.provider.Settings;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.os.Handler;
-import android.os.Message;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -35,13 +36,19 @@ public class MapsActivity
     StationDatabase stationDatabase;
     TextView logTextView;
 
-    static Handler handler;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_maps);
 
+        setContentView(R.layout.activity_maps);
+        int mUIFlag =
+                View.SYSTEM_UI_FLAG_FULLSCREEN
+                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                | View.SYSTEM_UI_FLAG_LOW_PROFILE
+                | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION;
+        getWindow().getDecorView().setSystemUiVisibility(mUIFlag);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
@@ -68,18 +75,32 @@ public class MapsActivity
         mCardReader.enable();
 
         stationDatabase = new StationDatabase(this);
-
-        handler = new Handler() {
-            @Override
-            public void handleMessage(Message message) {
-                logTextView.setText((String) message.obj);
-            }
-        };
     }
 
     @Override
-    public void onDiscovered(final Visitor visitor) {
+    public void onDiscovered(Visitor visitor) {
         if (visitor.fixStationData()) {
+            (new visitorTask(visitor)).execute();
+        } else {
+            (new logErrorTask(this)).execute();
+        }
+    }
+
+    @Override
+    public void onError(Exception exception) {
+
+    }
+
+    public class visitorTask extends AsyncTask<Visitor, Void, String> {
+        private Visitor visitor;
+
+        public visitorTask(Visitor visitor) {
+            super();
+            this.visitor = visitor;
+        }
+
+        @Override
+        protected String doInBackground(Visitor ... params) {
             visitor.setStationName(stationDatabase);
             Log.d("start line", visitor.getStartLineName());
             Log.d("start", visitor.getStartStationName());
@@ -89,21 +110,36 @@ public class MapsActivity
             Log.d("dest", visitor.getDestStationName());
             Log.d("destLat", visitor.getDestLatitude());
             Log.d("destLng", visitor.getDestLongitude());
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    Message message = Message.obtain();
-                    message.obj = String.format("%s 線 %s 駅 から %s 線 %s 駅",
-                            visitor.getStartLineName(),
-                            visitor.getStartStationName(),
-                            visitor.getDestLineName(),
-                            visitor.getDestStationName());
-                    handler.handleMessage(message);
-                }
-            });
             saveLog(visitor);
-        }  else {
-            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+            return String.format("%s線 %s駅 から %s線 %s駅",
+                    visitor.getStartLineName(),
+                    visitor.getStartStationName(),
+                    visitor.getDestLineName(),
+                    visitor.getDestStationName());
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            logTextView.setText(result);
+        }
+    }
+
+    public class logErrorTask extends AsyncTask<Void, Void, Void> {
+        private Context context;
+
+        public logErrorTask(Context context) {
+            super();
+            this.context = context;
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void nothing) {
+            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
             alertDialogBuilder
                     .setTitle("履歴参照エラー")
                     .setMessage("認識できる鉄道利用情報がありません。")
@@ -116,11 +152,6 @@ public class MapsActivity
                             })
                     .create();
         }
-    }
-
-    @Override
-    public void onError(Exception exception) {
-        logTextView.setText("カードを認識できません。");
     }
 
     /**
