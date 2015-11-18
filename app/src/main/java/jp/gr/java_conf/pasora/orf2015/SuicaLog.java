@@ -118,35 +118,27 @@ public class SuicaLog {
     public boolean isTrain() {
         Log.d("process", process);
         if (process.equals("01")) {
-            Log.d("process", "is train!");
             return true;  //運賃支払(改札出場)
         }
         if (process.equals("04")) {
-            Log.d("process", "is train!");
             return true;  //精算
         }
         if (process.equals("05")) {
-            Log.d("process", "is train!");
             return true;  //精算(入場精算)
         }
         if (process.equals("06")) {
-            Log.d("process", "is train!");
             return true;  //窓出(改札窓口処理)
         }
         if (process.equals("08")) {
-            Log.d("process", "is train!");
             return true;  //控除(窓口控除)
         }
         if (process.equals("13")) {
-            Log.d("process", "is train!");
             return true;  //新幹線利用
         }
         if (process.equals("84")) {
-            Log.d("process", "is train!");
             return true;  //精算(他社精算)
         }
         if (process.equals("85")) {
-            Log.d("process", "is train!");
             return true;  //精算(他社入場精算)
         }
 
