@@ -22,6 +22,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Locale;
 
 public class MapsActivity
@@ -33,6 +34,8 @@ public class MapsActivity
     private final ThreadLocal<GoogleMap> mMap = new ThreadLocal<>();
     StationDatabase stationDatabase;
     TextView logTextView;
+    ArrayList<MarkerOptions> startMarkerOptionsArrayList = new ArrayList<>();
+    ArrayList<MarkerOptions> destMarkerOptionsArrayList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -119,16 +122,27 @@ public class MapsActivity
         @Override
         protected void onPostExecute(String result) {
             SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
-            mapFragment.getMap()
-                    .addMarker(new MarkerOptions()
-                            .position(new LatLng(Double.parseDouble(visitor.getStartLatitude()), Double.parseDouble(visitor.getStartLongitude())))
-                            .title(visitor.getStartStationName())
-                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));
-            mapFragment.getMap()
-                    .addMarker(new MarkerOptions()
-                            .position(new LatLng(Double.parseDouble(visitor.getDestLatitude()), Double.parseDouble(visitor.getDestLongitude())))
-                            .title(visitor.getDestStationName())
-                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+            String startMarkerTitle  = String.format("%s線%s駅", visitor.getStartLineName(), visitor.getStartStationName());
+            String destMarkerTitle = String.format("%s線%s駅", visitor.getDestLineName(), visitor.getDestStationName());
+            if (!isMarked(startMarkerOptionsArrayList, startMarkerTitle)) {
+                startMarkerOptionsArrayList.add(
+                        new MarkerOptions()
+                        .position(new LatLng(Double.parseDouble(visitor.getStartLatitude()), Double.parseDouble(visitor.getStartLongitude())))
+                        .title(startMarkerTitle)
+                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));
+                mapFragment.getMap()
+                        .addMarker(startMarkerOptionsArrayList.get(startMarkerOptionsArrayList.size() - 1));
+            }
+
+            if (!isMarked(destMarkerOptionsArrayList, destMarkerTitle)) {
+                destMarkerOptionsArrayList.add(
+                        new MarkerOptions()
+                                .position(new LatLng(Double.parseDouble(visitor.getDestLatitude()), Double.parseDouble(visitor.getDestLongitude())))
+                                .title(destMarkerTitle)
+                                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+                mapFragment.getMap()
+                        .addMarker(destMarkerOptionsArrayList.get(destMarkerOptionsArrayList.size() - 1));
+            }
             logTextView.setText(result);
         }
     }
@@ -194,7 +208,9 @@ public class MapsActivity
         ContentValues values = new ContentValues();
         values.put(LogDatabaseHelper.COLUMN_DATE, dateStr);
         values.put(LogDatabaseHelper.COLUMN_START, visitor.getStartStationName());
+        values.put(LogDatabaseHelper.COLUMN_START_LINE, visitor.getStartLineName());
         values.put(LogDatabaseHelper.COLUMN_DESTINATION, visitor.getDestStationName());
+        values.put(LogDatabaseHelper.COLUMN_DESTINATION_LINE, visitor.getDestLineName());
         values.put(LogDatabaseHelper.COLUMN_START_LATITUDE, visitor.getStartLatitude());
         values.put(LogDatabaseHelper.COLUMN_START_LONGTITUDE, visitor.getStartLongitude());
         values.put(LogDatabaseHelper.COLUMN_DESTINATION_LATITUDE, visitor.getDestLatitude());
@@ -206,5 +222,15 @@ public class MapsActivity
         } finally {
             db.close();
         }
+    }
+
+    private boolean isMarked(ArrayList<MarkerOptions> markerOptions, String markerTitle) {
+        for (MarkerOptions obj : markerOptions) {
+            if (obj.getTitle().equals(markerTitle)) {
+                Log.d("isMarked", markerTitle +  " 重複");
+                return true;
+            }
+        }
+        return false;
     }
 }
