@@ -43,41 +43,49 @@ public class Visitor {
         suicaLogArrayList.add(suicaLog);
     }
 
-    public boolean isLatestLogToday() {
-        SuicaLog lastSuicaLog = suicaLogArrayList.get(suicaLogArrayList.size() - 1);
-        /*
-        if (lastSuicaLog.getDay() != this.day)
-            return false;
-        if (lastSuicaLog.getMonth() != this.month)
-            return false;
-        if (lastSuicaLog.getYear() != this.year)
-            return false;
-        */
-        return true;
-    }
-
     public boolean fixStationData() {
-        //if (!isLatestLogToday()) return false;
-        this.destSection = suicaLogArrayList.get(0).getExitSection();
-        this.destStation = suicaLogArrayList.get(0).getExitStation();
-        //駅名設定
-        //緯度経度設定
-        this.startSection = suicaLogArrayList.get(suicaLogArrayList.size() - 1).getEnterSection();
-        this.startStation = suicaLogArrayList.get(suicaLogArrayList.size() - 1).getEnterStation();
-        //駅名設定
-        //緯度経度設定
+        int i = 0;
+        boolean dest = false;
+        boolean start = false;
+        for (; i < suicaLogArrayList.size(); i++) {
+            SuicaLog suicaLogTemp = suicaLogArrayList.get(i);
+            Log.d("fixStationData dest", Integer.toString(i));
+            if (suicaLogTemp.isTrain()/*(TODO:remove comment) && suicaLogTemp.isToday()*/) {
+                this.destSection = suicaLogTemp.getExitSection();
+                this.destStation = suicaLogTemp.getExitStation();
+                Log.d("fixStationData dest", this.destStation);
+                dest = true;
+                break;
+            }
+        }
+
+        for (int j = suicaLogArrayList.size() - 1; j >= i; j--) {
+            SuicaLog suicaLogTemp = suicaLogArrayList.get(j);
+            Log.d("fixStationData start", Integer.toString(j));
+            if (suicaLogTemp.isTrain()/*(TODO:remove comment) && suicaLogTemp.isToday()*/) {
+                this.startSection = suicaLogTemp.getEnterSection();
+                this.startStation = suicaLogTemp.getEnterStation();
+                Log.d("fixStationData start", this.startStation);
+                start = true;
+                break;
+            }
+        }
+
         this.region = suicaLogArrayList.get(0).getRegion();
 
-        return true;
+        return dest && start;
     }
 
     public void setStationName(StationDatabase sd) {
-        Log.d("startSection", startSection);
-        Log.d("startStation", startStation);
         int start = sd.getLineNumber(region, startSection, startStation);
-        Log.d("destSection", destSection);
-        Log.d("destStation", destStation);
+        if (start == -1) {
+            this.startLineName = this.startStationName = "不明";
+        }
+
         int dest = sd.getLineNumber(region, destSection, destStation);
+        if (dest == -1) {
+            this.destLineName = this.destStationName = "不明";
+        }
 
         this.startLineName = sd.getLineName(start);
         this.startStationName = sd.getStationName(start);

@@ -32,7 +32,6 @@ public class StationDatabase {
     public StationDatabase(Context context) {
         this.context = context;
         parse();
-        check();
     }
 
     private void parse() {
@@ -53,6 +52,7 @@ public class StationDatabase {
         }
     }
 
+    //debug
     private void check() {
         for (int i = 0; i < list.size(); i++) {
             Log.d("csv:" + i, list.get(i)[5]);

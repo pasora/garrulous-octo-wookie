@@ -53,7 +53,7 @@ public class CardReader implements NfcAdapter.ReaderCallback {
                 byte[] suicaLogBin = getSuicaLogBin(nfcF, IDm, i);
                 visitor.importSuicaLog(new SuicaLog(suicaLogBin));
                 i++;
-            } while (visitor.isLatestLogToday());
+            } while (true /*visitor.isToday(i)*/);
             mListener.onDiscovered(visitor);
         } catch (IOException e) {
             mListener.onError(e);

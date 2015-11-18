@@ -1,6 +1,7 @@
 package jp.gr.java_conf.pasora.orf2015;
 
 import android.util.Log;
+import java.util.Date;
 
 
 /**
@@ -42,10 +43,9 @@ public class SuicaLog {
         this.exitStation = suicaLogStr[9];
         this.region = suicaLogStr[15];
 
-        Log.d("nfc", new String(suicaLogChars));
-        for (int i = 0; i < suicaLogStr.length; i++) {
+        Log.d("suicaLog", new String(suicaLogChars));
+        /*for (int i = 0; i < suicaLogStr.length; i++) {
             Log.d("suicaLogStr[" + i + "]", String.valueOf(suicaLogStr[i]));
-        }
         Log.d("log_year", String.valueOf(year));
         Log.d("log_month", String.valueOf(month));
         Log.d("log_day", String.valueOf(day));
@@ -55,6 +55,7 @@ public class SuicaLog {
         Log.d("log_exit_section", exitSection);
         Log.d("log_exit_station", exitStation);
         Log.d("log_region", region);
+        */
     }
 
     public int getYear() {
@@ -115,21 +116,52 @@ public class SuicaLog {
     }
 
     public boolean isTrain() {
-        if (process.equals("01")) return true;
-        if (process.equals("02")) return true;
-        if (process.equals("03")) return true;
-        if (process.equals("04")) return true;
-        if (process.equals("05")) return true;
-        if (process.equals("06")) return true;
-        if (process.equals("07")) return true;
-        if (process.equals("08")) return true;
-        if (process.equals("11")) return true;
-        if (process.equals("13")) return true;
-        if (process.equals("14")) return true;
-        if (process.equals("15")) return true;
-        if (process.equals("84")) return true;
-        if (process.equals("85")) return true;
+        Log.d("process", process);
+        if (process.equals("01")) {
+            Log.d("process", "is train!");
+            return true;  //運賃支払(改札出場)
+        }
+        if (process.equals("04")) {
+            Log.d("process", "is train!");
+            return true;  //精算
+        }
+        if (process.equals("05")) {
+            Log.d("process", "is train!");
+            return true;  //精算(入場精算)
+        }
+        if (process.equals("06")) {
+            Log.d("process", "is train!");
+            return true;  //窓出(改札窓口処理)
+        }
+        if (process.equals("08")) {
+            Log.d("process", "is train!");
+            return true;  //控除(窓口控除)
+        }
+        if (process.equals("13")) {
+            Log.d("process", "is train!");
+            return true;  //新幹線利用
+        }
+        if (process.equals("84")) {
+            Log.d("process", "is train!");
+            return true;  //精算(他社精算)
+        }
+        if (process.equals("85")) {
+            Log.d("process", "is train!");
+            return true;  //精算(他社入場精算)
+        }
 
         return false;
+    }
+
+    public boolean isToday() {
+        Date date = new Date();
+        if (date.getDay() != this.day)
+            return false;
+        if (date.getMonth() != this.month)
+            return false;
+        if (date.getYear() != this.year)
+            return false;
+
+        return true;
     }
 }

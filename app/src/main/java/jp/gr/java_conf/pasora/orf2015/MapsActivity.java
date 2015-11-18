@@ -64,6 +64,8 @@ public class MapsActivity
             Log.d("dest", visitor.getDestStationName());
             Log.d("destLat", visitor.getDestLatitude());
             Log.d("destLng", visitor.getDestLongitude());
+        }  else {
+
         }
     }
 
