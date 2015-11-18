@@ -50,6 +50,7 @@ public class CardReader implements NfcAdapter.ReaderCallback {
             int i = 0;
             do {
                 if (i >= 20) break;
+                Log.d("blockNumber", Integer.toString(i));
                 byte[] suicaLogBin = getSuicaLogBin(nfcF, IDm, i);
                 visitor.importSuicaLog(new SuicaLog(suicaLogBin));
                 i++;
@@ -69,13 +70,19 @@ public class CardReader implements NfcAdapter.ReaderCallback {
             e.printStackTrace();
         }
         if (res == null) return null;
-        byte[] raw = new byte[]{
-                res[13], res[14], res[15], res[16],
-                res[17], res[18], res[19], res[20],
-                res[21], res[22], res[23], res[24],
-                res[25], res[26], res[27], res[28]
-        };
-        return raw;
+        try {
+            byte[] raw = new byte[]{
+                    res[13], res[14], res[15], res[16],
+                    res[17], res[18], res[19], res[20],
+                    res[21], res[22], res[23], res[24],
+                    res[25], res[26], res[27], res[28]
+            };
+            return raw;
+        } catch (ArrayIndexOutOfBoundsException e) {
+            mListener.onError(e);
+        }
+
+        return null;
     }
 
     byte[] readWithoutEncryption(NfcF nfcF, byte[] IDm, int blockNumber) throws IOException {

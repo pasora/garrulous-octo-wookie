@@ -1,11 +1,14 @@
 package jp.gr.java_conf.pasora.orf2015;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.provider.Settings;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.WindowManager;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -23,6 +26,8 @@ public class MapsActivity
     private final ThreadLocal<GoogleMap> mMap = new ThreadLocal<>();
     StationDatabase stationDatabase;
 
+    TextView message;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,6 +40,8 @@ public class MapsActivity
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
         mapFragment.getMap().moveCamera(CameraUpdateFactory.zoomTo(10));
+
+        message = (TextView)this.findViewById(R.id.showLogData);
 
         mCardReader = new CardReader(this, this);
 
@@ -64,14 +71,29 @@ public class MapsActivity
             Log.d("dest", visitor.getDestStationName());
             Log.d("destLat", visitor.getDestLatitude());
             Log.d("destLng", visitor.getDestLongitude());
+            message.setText(visitor.getStartLineName() + "線"
+                            + visitor.getStartStationName() + "駅 から "
+                            + visitor.getDestLineName() + "線"
+                            + visitor.getDestStationName() + "駅");
         }  else {
-
+            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+            alertDialogBuilder
+                    .setTitle("履歴参照エラー")
+                    .setMessage("認識できる鉄道利用情報がありません。")
+                    .setPositiveButton("OK",
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    //TODO 地図クリア
+                                }
+                            })
+                    .create();
         }
     }
 
     @Override
     public void onError(Exception exception) {
-
+        message.setText("カードを認識できません。");
     }
 
     /**

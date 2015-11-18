@@ -53,7 +53,7 @@ public class Visitor {
             if (suicaLogTemp.isTrain()/*(TODO:remove comment) && suicaLogTemp.isToday()*/) {
                 this.destSection = suicaLogTemp.getExitSection();
                 this.destStation = suicaLogTemp.getExitStation();
-                Log.d("fixStationData dest", this.destStation);
+                Log.d("fixStationData deststa", this.destStation);
                 dest = true;
                 break;
             }
@@ -65,7 +65,7 @@ public class Visitor {
             if (suicaLogTemp.isTrain()/*(TODO:remove comment) && suicaLogTemp.isToday()*/) {
                 this.startSection = suicaLogTemp.getEnterSection();
                 this.startStation = suicaLogTemp.getEnterStation();
-                Log.d("fixStationData start", this.startStation);
+                Log.d("fixStationData startsta", this.startStation);
                 start = true;
                 break;
             }
@@ -80,22 +80,22 @@ public class Visitor {
         int start = sd.getLineNumber(region, startSection, startStation);
         if (start == -1) {
             this.startLineName = this.startStationName = "不明";
+        } else {
+            this.startLineName = sd.getLineName(start);
+            this.startStationName = sd.getStationName(start);
+            this.startLatitude = sd.getLatitude(start);
+            this.startLongitude = sd.getLongitude(start);
         }
 
         int dest = sd.getLineNumber(region, destSection, destStation);
         if (dest == -1) {
             this.destLineName = this.destStationName = "不明";
+        } else {
+            this.destLineName = sd.getLineName(dest);
+            this.destStationName = sd.getStationName(dest);
+            this.destLatitude = sd.getLatitude(dest);
+            this.destLongitude = sd.getLongitude(dest);
         }
-
-        this.startLineName = sd.getLineName(start);
-        this.startStationName = sd.getStationName(start);
-        this.startLatitude = sd.getLatitude(start);
-        this.startLongitude = sd.getLongitude(start);
-
-        this.destLineName = sd.getLineName(dest);
-        this.destStationName = sd.getStationName(dest);
-        this.destLatitude = sd.getLatitude(dest);
-        this.destLongitude = sd.getLongitude(dest);
     }
 
     public String getStartStationName() {
