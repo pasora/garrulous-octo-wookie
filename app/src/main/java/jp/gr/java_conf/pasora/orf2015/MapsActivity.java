@@ -207,14 +207,8 @@ public class MapsActivity
 
         ContentValues values = new ContentValues();
         values.put(LogDatabaseHelper.COLUMN_DATE, dateStr);
-        values.put(LogDatabaseHelper.COLUMN_START, visitor.getStartStationName());
-        values.put(LogDatabaseHelper.COLUMN_START_LINE, visitor.getStartLineName());
-        values.put(LogDatabaseHelper.COLUMN_DESTINATION, visitor.getDestStationName());
-        values.put(LogDatabaseHelper.COLUMN_DESTINATION_LINE, visitor.getDestLineName());
-        values.put(LogDatabaseHelper.COLUMN_START_LATITUDE, visitor.getStartLatitude());
-        values.put(LogDatabaseHelper.COLUMN_START_LONGTITUDE, visitor.getStartLongitude());
-        values.put(LogDatabaseHelper.COLUMN_DESTINATION_LATITUDE, visitor.getDestLatitude());
-        values.put(LogDatabaseHelper.COLUMN_DESTINATION_LONGTITUDE, visitor.getDestLongitude());
+        values.put(LogDatabaseHelper.COLUMN_START, String.format("%s線%s駅", visitor.getStartLineName(), visitor.getStartStationName()));
+        values.put(LogDatabaseHelper.COLUMN_DESTINATION, String.format("%s線%s駅", visitor.getDestLineName(), visitor.getDestStationName()));
         try {
             db.insert(LogDatabaseHelper.TABLE_LOGRECORD, "not available", values);
         } catch (Exception e) {

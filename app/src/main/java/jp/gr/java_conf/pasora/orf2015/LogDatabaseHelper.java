@@ -15,27 +15,14 @@ public class LogDatabaseHelper extends SQLiteOpenHelper {
     public static final String COLUMN_IDM = "idm";
     public static final String COLUMN_DATE = "date";
     public static final String COLUMN_START = "start";
-    public static final String COLUMN_START_LINE = "startline";
     public static final String COLUMN_DESTINATION = "destination";
-    public static final String COLUMN_DESTINATION_LINE = "destinationline";
-    public static final String COLUMN_START_LATITUDE = "startlatitude";
-    public static final String COLUMN_START_LONGTITUDE = "startlongtitude";
-    public static final String COLUMN_DESTINATION_LATITUDE = "destinationlatitude";
-    public static final String COLUMN_DESTINATION_LONGTITUDE = "destinationlongtitude";
     private static final String CREATE_TABLE_SQL =
             "create table " + TABLE_LOGRECORD + " "
                     + "(" + COLUMN_ID + " integer primary key autoincrement,"
                     + COLUMN_IDM + " text,"
                     + COLUMN_DATE + " text not null,"
                     + COLUMN_START + " text not null,"
-                    + COLUMN_START_LINE + " text not null,"
-                    + COLUMN_DESTINATION + " text not null,"
-                    + COLUMN_DESTINATION_LINE + " text not null,"
-                    + COLUMN_START_LATITUDE + " text,"
-                    + COLUMN_START_LONGTITUDE + " text,"
-                    + COLUMN_DESTINATION_LATITUDE + " text,"
-                    + COLUMN_DESTINATION_LONGTITUDE + " text)";
-
+                    + COLUMN_DESTINATION + " text not null)";
     public LogDatabaseHelper(Context context) {
         super(context, DBNAME, null, DBVERSION);
     }
