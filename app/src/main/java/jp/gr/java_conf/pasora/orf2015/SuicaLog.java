@@ -145,7 +145,7 @@ public class SuicaLog {
     public boolean isToday() {
         Date date = new Date();
         //TODO remove "-1"
-        if (date.getDate() - 1 != this.day)
+        if (date.getDate() != this.day)
             return false;
         if (date.getMonth() + 1 != this.month)
             return false;
