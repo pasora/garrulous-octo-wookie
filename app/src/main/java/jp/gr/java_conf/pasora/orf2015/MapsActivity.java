@@ -82,7 +82,7 @@ public class MapsActivity
         if (visitor.fixStationData()) {
             (new visitorTask(visitor)).execute();
         } else {
-            (new logErrorTask(this)).execute();
+            (new logErrorTask()).execute();
         }
     }
 
@@ -120,26 +120,32 @@ public class MapsActivity
 
         @Override
         protected void onPostExecute(String result) {
+            SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+            mapFragment.getMap()
+                    .addMarker(new MarkerOptions()
+                            .position(new LatLng(Double.parseDouble(visitor.getStartLatitude()), Double.parseDouble(visitor.getStartLongitude())))
+                            .title(visitor.getStartStationName()));
+            mapFragment.getMap()
+                    .addMarker(new MarkerOptions()
+                            .position(new LatLng(Double.parseDouble(visitor.getDestLatitude()), Double.parseDouble(visitor.getDestLongitude())))
+                            .title(visitor.getDestStationName()));
             logTextView.setText(result);
+
         }
     }
 
-    public class logErrorTask extends AsyncTask<Void, Void, Void> {
-        private Context context;
-
-        public logErrorTask(Context context) {
-            super();
-            this.context = context;
-        }
+    public class logErrorTask extends AsyncTask {
 
         @Override
-        protected Void doInBackground(Void... params) {
+        protected Object doInBackground(Object[] params) {
+            Log.d("logErrorTask", "doInBackground");
             return null;
         }
 
         @Override
-        protected void onPostExecute(Void nothing) {
-            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
+        protected void onPostExecute(Object nothing) {
+            Log.d("logErrorTask", "onPostExecute");
+            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MapsActivity.this);
             alertDialogBuilder
                     .setTitle("履歴参照エラー")
                     .setMessage("認識できる鉄道利用情報がありません。")
@@ -166,7 +172,6 @@ public class MapsActivity
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap.set(googleMap);
-        // Add a marker in Sydney and move the camera
         LatLng tokyoMidtown = new LatLng(35.6655766,139.7304511);
         mMap.get().addMarker(new MarkerOptions().position(tokyoMidtown).title("here!"));
         mMap.get().moveCamera(CameraUpdateFactory.newLatLng(tokyoMidtown));
