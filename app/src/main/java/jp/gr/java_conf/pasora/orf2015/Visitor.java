@@ -10,9 +10,6 @@ import java.util.Date;
  */
 public class Visitor {
     private Date date;
-    private int year;
-    private int month;
-    private int day;
 
     private String startSection;
     private String startStation;
@@ -34,9 +31,6 @@ public class Visitor {
 
     public Visitor() {
         this.date = new Date();
-        this.year = date.getYear();
-        this.month = date.getMonth();
-        this.day = date.getDay();
     }
 
     public void importSuicaLog(SuicaLog suicaLog) {
@@ -50,7 +44,7 @@ public class Visitor {
         for (; i < suicaLogArrayList.size(); i++) {
             SuicaLog suicaLogTemp = suicaLogArrayList.get(i);
             Log.d("fixStationData dest", Integer.toString(i));
-            if (suicaLogTemp.isTrain()/*(TODO:remove comment) && suicaLogTemp.isToday()*/) {
+            if (suicaLogTemp.isTrain()&& suicaLogTemp.isToday()) {
                 this.destSection = suicaLogTemp.getExitSection();
                 this.destStation = suicaLogTemp.getExitStation();
                 Log.d("fixStationData deststa", this.destStation);
@@ -62,7 +56,7 @@ public class Visitor {
         for (int j = suicaLogArrayList.size() - 1; j >= i; j--) {
             SuicaLog suicaLogTemp = suicaLogArrayList.get(j);
             Log.d("fixStationData start", Integer.toString(j));
-            if (suicaLogTemp.isTrain()/*(TODO:remove comment) && suicaLogTemp.isToday()*/) {
+            if (suicaLogTemp.isTrain()&& suicaLogTemp.isToday()) {
                 this.startSection = suicaLogTemp.getEnterSection();
                 this.startStation = suicaLogTemp.getEnterStation();
                 Log.d("fixStationData startsta", this.startStation);
@@ -128,5 +122,9 @@ public class Visitor {
 
     public String getDestLineName() {
         return destLineName;
+    }
+
+    public Date getDate() {
+        return date;
     }
 }

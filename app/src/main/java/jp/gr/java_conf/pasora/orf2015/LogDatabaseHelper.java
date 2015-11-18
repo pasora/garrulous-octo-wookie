@@ -23,17 +23,16 @@ public class LogDatabaseHelper extends SQLiteOpenHelper {
     private static final String CREATE_TABLE_SQL =
             "create table " + TABLE_LOGRECORD + " "
                     + "(" + COLUMN_ID + " integer primary key autoincrement,"
-                    + COLUMN_IDM + " text not null,"
+                    + COLUMN_IDM + " text,"
                     + COLUMN_DATE + " text not null,"
                     + COLUMN_START + " text not null,"
                     + COLUMN_DESTINATION + " text not null,"
-                    + COLUMN_START_LATITUDE + " text not null,"
-                    + COLUMN_START_LONGTITUDE + " text not null,"
-                    + COLUMN_DESTINATION_LATITUDE + " text not null,"
-                    + COLUMN_DESTINATION_LONGTITUDE + " text not null)";
+                    + COLUMN_START_LATITUDE + " text,"
+                    + COLUMN_START_LONGTITUDE + " text,"
+                    + COLUMN_DESTINATION_LATITUDE + " text,"
+                    + COLUMN_DESTINATION_LONGTITUDE + " text)";
 
-
-    public LogDatabaseHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
+    public LogDatabaseHelper(Context context) {
         super(context, DBNAME, null, DBVERSION);
     }
 

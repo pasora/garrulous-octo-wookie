@@ -1,8 +1,10 @@
 package jp.gr.java_conf.pasora.orf2015;
 
 import android.app.AlertDialog;
+import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.provider.Settings;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
@@ -10,6 +12,8 @@ import android.util.Log;
 import android.view.WindowManager;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.os.Handler;
+import android.os.Message;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -18,15 +22,20 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.text.SimpleDateFormat;
+import java.util.Locale;
+
 public class MapsActivity
         extends FragmentActivity
         implements OnMapReadyCallback, CardReader.CardReaderListener  {
 
     private CardReader mCardReader;
+    private LogDatabaseHelper logDatabaseHelper;
     private final ThreadLocal<GoogleMap> mMap = new ThreadLocal<>();
     StationDatabase stationDatabase;
+    TextView logTextView;
 
-    TextView message;
+    static Handler handler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,7 +50,9 @@ public class MapsActivity
         mapFragment.getMapAsync(this);
         mapFragment.getMap().moveCamera(CameraUpdateFactory.zoomTo(10));
 
-        message = (TextView)this.findViewById(R.id.showLogData);
+        logTextView = (TextView)this.findViewById(R.id.showLogData);
+
+        logDatabaseHelper = new LogDatabaseHelper(this);
 
         mCardReader = new CardReader(this, this);
 
@@ -57,10 +68,17 @@ public class MapsActivity
         mCardReader.enable();
 
         stationDatabase = new StationDatabase(this);
+
+        handler = new Handler() {
+            @Override
+            public void handleMessage(Message message) {
+                logTextView.setText((String) message.obj);
+            }
+        };
     }
 
     @Override
-    public void onDiscovered(Visitor visitor) {
+    public void onDiscovered(final Visitor visitor) {
         if (visitor.fixStationData()) {
             visitor.setStationName(stationDatabase);
             Log.d("start line", visitor.getStartLineName());
@@ -71,10 +89,19 @@ public class MapsActivity
             Log.d("dest", visitor.getDestStationName());
             Log.d("destLat", visitor.getDestLatitude());
             Log.d("destLng", visitor.getDestLongitude());
-            message.setText(visitor.getStartLineName() + "線"
-                            + visitor.getStartStationName() + "駅 から "
-                            + visitor.getDestLineName() + "線"
-                            + visitor.getDestStationName() + "駅");
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    Message message = Message.obtain();
+                    message.obj = String.format("%s 線 %s 駅 から %s 線 %s 駅",
+                            visitor.getStartLineName(),
+                            visitor.getStartStationName(),
+                            visitor.getDestLineName(),
+                            visitor.getDestStationName());
+                    handler.handleMessage(message);
+                }
+            });
+            saveLog(visitor);
         }  else {
             AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
             alertDialogBuilder
@@ -93,7 +120,7 @@ public class MapsActivity
 
     @Override
     public void onError(Exception exception) {
-        message.setText("カードを認識できません。");
+        logTextView.setText("カードを認識できません。");
     }
 
     /**
@@ -124,5 +151,26 @@ public class MapsActivity
     public void onResume() {
         super.onResume();
         mCardReader.enable();
+    }
+
+    public void saveLog(Visitor visitor) {
+        SQLiteDatabase db = logDatabaseHelper.getWritableDatabase();
+        String dateStr = new SimpleDateFormat("yyyy/MM/dd", Locale.JAPAN).format(visitor.getDate());
+
+        ContentValues values = new ContentValues();
+        values.put(LogDatabaseHelper.COLUMN_DATE, dateStr);
+        values.put(LogDatabaseHelper.COLUMN_START, visitor.getStartStationName());
+        values.put(LogDatabaseHelper.COLUMN_DESTINATION, visitor.getDestStationName());
+        values.put(LogDatabaseHelper.COLUMN_START_LATITUDE, visitor.getStartLatitude());
+        values.put(LogDatabaseHelper.COLUMN_START_LONGTITUDE, visitor.getStartLongitude());
+        values.put(LogDatabaseHelper.COLUMN_DESTINATION_LATITUDE, visitor.getDestLatitude());
+        values.put(LogDatabaseHelper.COLUMN_DESTINATION_LONGTITUDE, visitor.getDestLongitude());
+        try {
+            db.insert(LogDatabaseHelper.TABLE_LOGRECORD, "not available", values);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            db.close();
+        }
     }
 }

@@ -144,11 +144,11 @@ public class SuicaLog {
 
     public boolean isToday() {
         Date date = new Date();
-        if (date.getDay() != this.day)
+        if (date.getDate() != this.day)
             return false;
-        if (date.getMonth() != this.month)
+        if (date.getMonth() + 1 != this.month)
             return false;
-        if (date.getYear() != this.year)
+        if (date.getYear() + 1900 != this.year)
             return false;
 
         return true;
