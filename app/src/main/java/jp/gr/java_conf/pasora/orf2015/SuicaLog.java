@@ -120,9 +120,6 @@ public class SuicaLog {
         if (process.equals("01")) {
             return true;  //運賃支払(改札出場)
         }
-        if (process.equals("04")) {
-            return true;  //精算
-        }
         if (process.equals("05")) {
             return true;  //精算(入場精算)
         }
