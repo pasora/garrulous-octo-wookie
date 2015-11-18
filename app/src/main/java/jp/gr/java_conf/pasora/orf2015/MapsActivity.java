@@ -1,9 +1,6 @@
 package jp.gr.java_conf.pasora.orf2015;
 
-import android.app.AlertDialog;
 import android.content.ContentValues;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
@@ -88,7 +85,7 @@ public class MapsActivity
 
     @Override
     public void onError(Exception exception) {
-
+        (new cardErrorTask()).execute();
     }
 
     public class visitorTask extends AsyncTask<Visitor, Void, String> {
@@ -138,25 +135,24 @@ public class MapsActivity
 
         @Override
         protected Object doInBackground(Object[] params) {
-            Log.d("logErrorTask", "doInBackground");
             return null;
         }
 
         @Override
         protected void onPostExecute(Object nothing) {
-            Log.d("logErrorTask", "onPostExecute");
-            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MapsActivity.this);
-            alertDialogBuilder
-                    .setTitle("履歴参照エラー")
-                    .setMessage("認識できる鉄道利用情報がありません。")
-                    .setPositiveButton("OK",
-                            new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    //TODO 地図クリア
-                                }
-                            })
-                    .create();
+            logTextView.setText("認識できる鉄道利用記録がありません");
+        }
+    }
+
+    public class cardErrorTask extends AsyncTask {
+        @Override
+        protected Object doInBackground(Object[] params) {
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Object nothing) {
+            logTextView.setText("もう一度かざしてください");
         }
     }
 
