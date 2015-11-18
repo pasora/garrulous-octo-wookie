@@ -17,6 +17,8 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
@@ -121,11 +123,13 @@ public class MapsActivity
             mapFragment.getMap()
                     .addMarker(new MarkerOptions()
                             .position(new LatLng(Double.parseDouble(visitor.getStartLatitude()), Double.parseDouble(visitor.getStartLongitude())))
-                            .title(visitor.getStartStationName()));
+                            .title(visitor.getStartStationName())
+                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));
             mapFragment.getMap()
                     .addMarker(new MarkerOptions()
                             .position(new LatLng(Double.parseDouble(visitor.getDestLatitude()), Double.parseDouble(visitor.getDestLongitude())))
-                            .title(visitor.getDestStationName()));
+                            .title(visitor.getDestStationName())
+                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
             logTextView.setText(result);
 
         }
