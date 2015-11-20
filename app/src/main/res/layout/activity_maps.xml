@@ -2,69 +2,71 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MapsActivity"
-    android:orientation="vertical">
-    
+    android:orientation="vertical"
+    tools:context=".MapsActivity">
+
     <TextView
+        android:id="@+id/showLogData"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/showLogData"
-        android:gravity="center"
-        android:textSize="30dp"
         android:background="#FFFFFF"
-        android:textColor="#000000" />
+        android:gravity="center"
+        android:textColor="#000000"
+        android:textSize="30dp" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="horizontal">
-        
+
         <fragment xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:tools="http://schemas.android.com/tools"
-            android:layout_width="640dp" android:layout_height="match_parent"
             android:id="@+id/map"
             android:name="com.google.android.gms.maps.SupportMapFragment"
+            android:layout_width="640dp"
+            android:layout_height="match_parent"
             tools:context=".MapsActivity" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/destText"
-                android:gravity="center"
-                android:textSize="30dp"
-                android:textColor="#000000"
-                android:background="#6dde3c"
-                android:text="到着駅"/>
 
             <TextView
+                android:id="@+id/destText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#6dde3c"
+                android:gravity="center"
+                android:text="到着駅"
+                android:textColor="#000000"
+                android:textSize="30dp" />
+
+            <TextView
+                android:id="@+id/destList"
                 android:layout_width="match_parent"
                 android:layout_height="210dp"
-                android:id="@+id/destList"
-                android:textSize="20dp"
+                android:background="#FFFFFF"
                 android:textColor="#000000"
-                android:background="#FFFFFF"/>
+                android:textSize="20dp" />
 
             <TextView
+                android:id="@+id/startText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/startText"
-                android:gravity="center"
-                android:textSize="30dp"
-                android:textColor="#000000"
                 android:background="#8282ff"
-                android:text="出発駅" />
+                android:gravity="center"
+                android:text="出発駅"
+                android:textColor="#000000"
+                android:textSize="30dp" />
 
             <TextView
+                android:id="@+id/startList"
                 android:layout_width="match_parent"
                 android:layout_height="300dp"
-                android:id="@+id/startList"
-                android:textSize="20dp"
+                android:background="#FFFFFF"
                 android:textColor="#000000"
-                android:background="#FFFFFF"/>
+                android:textSize="20dp" />
 
         </LinearLayout>
     </LinearLayout>
