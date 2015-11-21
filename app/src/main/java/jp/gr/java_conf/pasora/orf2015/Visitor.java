@@ -11,21 +11,21 @@ import java.util.Date;
 public class Visitor {
     private Date date;
 
-    private String startSection;
-    private String startStation;
-    private String startLineName;
-    private String startStationName;
-    private String startLatitude;
-    private String startLongitude;
+    private String startSection = "";
+    private String startStation = "";
+    private String startLineName = "";
+    private String startStationName = "";
+    private String startLatitude = "";
+    private String startLongitude = "";
 
-    private String destSection;
-    private String destStation;
-    private String destLineName;
-    private String destStationName;
-    private String destLatitude;
-    private String destLongitude;
+    private String destSection = "";
+    private String destStation = "";
+    private String destLineName = "";
+    private String destStationName = "";
+    private String destLatitude = "";
+    private String destLongitude = "";
 
-    private String region;
+    private String region = "";
 
     private ArrayList<SuicaLog> suicaLogArrayList = new ArrayList<SuicaLog>();
 

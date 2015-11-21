@@ -63,8 +63,7 @@ public class StationDatabase {
         for (int i = 0; i < list.size(); i++) {
             if (list.get(i)[2].equals(station))
                 if (list.get(i)[1].equals(area))
-                    if (list.get(i)[0].equals(region))
-                        return i;
+                    return i;
         }
         return -1;
     }

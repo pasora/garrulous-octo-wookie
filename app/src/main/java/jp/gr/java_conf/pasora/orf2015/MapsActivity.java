@@ -132,7 +132,7 @@ public class MapsActivity
             SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
             String startMarkerTitle  = String.format("%s線%s駅", visitor.getStartLineName(), visitor.getStartStationName());
             String destMarkerTitle = String.format("%s線%s駅", visitor.getDestLineName(), visitor.getDestStationName());
-            if (!isMarked(startMarkerOptionsArrayList, startMarkerTitle)) {
+            if (!isMarked(startMarkerOptionsArrayList, startMarkerTitle) && !visitor.getStartLatitude().equals("")) {
                 startMarkerOptionsArrayList.add(
                         new MarkerOptions()
                         .position(new LatLng(Double.parseDouble(visitor.getStartLatitude()), Double.parseDouble(visitor.getStartLongitude())))
@@ -142,7 +142,7 @@ public class MapsActivity
                         .addMarker(startMarkerOptionsArrayList.get(startMarkerOptionsArrayList.size() - 1));
             }
 
-            if (!isMarked(destMarkerOptionsArrayList, destMarkerTitle)) {
+            if (!isMarked(destMarkerOptionsArrayList, destMarkerTitle) && !visitor.getDestLatitude().equals("")) {
                 destMarkerOptionsArrayList.add(
                         new MarkerOptions()
                                 .position(new LatLng(Double.parseDouble(visitor.getDestLatitude()), Double.parseDouble(visitor.getDestLongitude())))
